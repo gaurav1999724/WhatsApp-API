@@ -5,6 +5,7 @@ use App\Models\Message;
 use App\Models\Chatroom;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Events\MessageSent;
 
 class MessageController extends Controller
 {
@@ -26,6 +27,8 @@ class MessageController extends Controller
             'message' => $request->message,
             'attachment_path' => $path,
         ]);
+        \Log::info('Dispatching ChatMessage event >>>>> ', ['message' => $message]);
+        broadcast(new MessageSent($message));
         return response()->json($message);
     }
     public function list(Request $request)
